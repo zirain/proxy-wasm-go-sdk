@@ -85,6 +85,7 @@ type HostEmulator interface {
 	// The number of headers and endOfStream are passed to the plugin and the content of headers are visible in
 	// the plugin for methods like proxywasm.GetHttpResponseHeaders.
 	CallOnResponseHeaders(contextID uint32, headers [][2]string, endOfStream bool) types.Action
+	CallOnResponseMetadata(contextID uint32, metadata [][2]string) types.Action
 	// CallOnResponseBody executes types.HttpContext.OnHttpResponseBody in the plugin.
 	// The number of bytes and endOfStream are passed to the plugin and the content of bytes are visible in the plugin
 	// for methods like proxywasm.GetHttpResponseBody.
@@ -97,6 +98,7 @@ type HostEmulator interface {
 	// The number of headers and endOfStream are passed to the plugin and the content of headers are visible in the
 	// plugin for methods like proxywasm.GetHttpRequestHeaders.
 	CallOnRequestHeaders(contextID uint32, headers [][2]string, endOfStream bool) types.Action
+	CallOnRequestMetadata(contextID uint32, metadata [][2]string) types.Action
 	// CallOnRequestTrailers executes types.HttpContext.OnHttpRequestTrailers in the plugin.
 	// The number of trailers and endOfStream are passed to the plugin and the content of trailers are visible in the
 	// plugin for methods like proxywasm.GetHttpRequestTrailers.

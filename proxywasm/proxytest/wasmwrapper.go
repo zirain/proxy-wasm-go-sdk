@@ -36,9 +36,11 @@ type guestABI struct {
 	proxyOnDone             api.Function
 	proxyOnQueueReady       api.Function
 	proxyOnTick             api.Function
+	proxyOnRequestMetadata  api.Function
 	proxyOnRequestHeaders   api.Function
 	proxyOnRequestBody      api.Function
 	proxyOnRequestTrailers  api.Function
+	proxyOnResponseMetadata api.Function
 	proxyOnResponseHeaders  api.Function
 	proxyOnResponseBody     api.Function
 	proxyOnResponseTrailers api.Function
@@ -211,6 +213,13 @@ type httpContext struct {
 	ctx context.Context
 }
 
+// OnHttpRequestMetadata implements the same method on types.HttpContext.
+func (h *httpContext) OnHttpRequestMetadata(numMetadata int) types.Action {
+	res, err := h.abi.proxyOnRequestMetadata.Call(h.ctx, h.id, uint64(numMetadata))
+	handleErr(err)
+	return types.Action(res[0])
+}
+
 // OnHttpRequestHeaders implements the same method on types.HttpContext.
 func (h *httpContext) OnHttpRequestHeaders(numHeaders int, endOfStream bool) types.Action {
 	res, err := h.abi.proxyOnRequestHeaders.Call(h.ctx, h.id, uint64(numHeaders), wasmBool(endOfStream))
@@ -242,6 +251,13 @@ func (h *httpContext) OnHttpResponseHeaders(numHeaders int, endOfStream bool) ty
 // OnHttpResponseBody implements the same method on types.HttpContext.
 func (h *httpContext) OnHttpResponseBody(bodySize int, endOfStream bool) types.Action {
 	res, err := h.abi.proxyOnResponseBody.Call(h.ctx, h.id, uint64(bodySize), wasmBool(endOfStream))
+	handleErr(err)
+	return types.Action(res[0])
+}
+
+// OnHttpResponseMetadata implements the same method on types.HttpContext.
+func (h *httpContext) OnHttpResponseMetadata(numMetadata int) types.Action {
+	res, err := h.abi.proxyOnResponseMetadata.Call(h.ctx, h.id, uint64(numMetadata))
 	handleErr(err)
 	return types.Action(res[0])
 }
